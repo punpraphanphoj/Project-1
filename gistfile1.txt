@@ -1,0 +1,38 @@
+#Project 1, Data load function
+
+import numpy as np
+import pandas as pd
+
+def dataLoad(filename):
+    database=np.array(pd.read_csv(filename))
+    #Create data array for each bacteria name    
+    bacterianame=np.array(["Salmonella enterica","Bacillus cereus",
+                           "Listeria","Brochothrix thermosphacta"])
+    #Create empty array to store output data
+    data=np.empty(database.shape,dtype=object)
+
+    #While loop to check condition for every row of input data    
+    #If erroneous data is found, the last blank row of data array will be deleted 
+    #Correct data will be stored in data array with it's bacteria name   
+    i=0
+    while (i<=database.shape[0]-1):
+        if (database[i,0]<10):
+            print("The temperature in line %d is lower than 10 degrees\n" %(i+1))        
+            data=np.delete(data,-1,0)
+        elif (database[i,0]>60):
+            print("The temperature in line %d is higher than 60 degrees\n" %(i+1))
+            data=np.delete(data,-1,0)
+        elif (database[i,1]<0):
+            print("The bacteria growthrate in line %d is negative\n" %(i+1))
+            data=np.delete(data,-1,0)
+        elif (database[i,2] not in range(1,5)):
+            print("The bacteria type in line %d is not valid\n" %(i+1))
+            data=np.delete(data,-1,0)
+        else:
+            data[i,:]=database[i,:]
+            data[i,2]=bacterianame[int(database[i,2]-1)]
+        i+=1
+    return data
+
+
+print(dataLoad("Book1.csv"))
