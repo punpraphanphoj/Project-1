@@ -1,0 +1,59 @@
+import pandas as pd
+import numpy as np
+import matplotlib.pyplot as plt
+
+def dataPlot(data):
+    
+    database=pd.read_csv(data)
+    alldata=database.as_matrix(columns=database.columns[0:]) 
+    
+    # Plot 1
+    
+    fig=plt.figure(1)
+    his=np.histogram(alldata[:,2], bins=(np.arange(1,6)))
+    plt.bar(his[1][1:],his[0],width=0.8, align="center")
+    ax=fig.gca()
+    ax.set_xticks(his[1][1:])
+    ax.set_xticklabels(["Salmonella enterica","Bacillus cereus","Listeria","Brochothrix thermosphacta"], rotation = 60, ha="right")
+    plt.title("Number of bacteria")
+    plt.ylabel("Number")
+    
+    # Plot 2
+    
+    plt.figure(2)    
+    bac1 = []
+    bac2 = []
+    bac3 = []
+    bac4 = []
+    
+    # for loop separates array into 4 arrays, each of them containing data for different bacteria type
+    
+    for i in range (len(alldata)):
+        if alldata[i,2] == 1:
+            bac1.append(alldata[i,:])
+            bacteria1 = np.asarray (bac1)
+        elif alldata[i,2] == 2:
+            bac2.append(alldata[i,:])
+            bacteria2 = np.asarray (bac2)
+        elif alldata[i,2] == 3:
+            bac3.append(alldata[i,:])
+            bacteria3 = np.asarray (bac3)
+        elif alldata[i,2] == 4:
+            bac4.append(alldata[i,:])
+            bacteria4 = np.asarray (bac4)
+    plt.plot(bacteria1[:,0],bacteria1[:,1], "b*", label="Salmonella enterica")  
+    plt.plot(bacteria2[:,0],bacteria2[:,1], "go", label="Bacillus cereus")
+    plt.plot(bacteria3[:,0],bacteria3[:,1], "rs", label="Listeria")
+    plt.plot(bacteria4[:,0],bacteria4[:,1], "y^", label="Brochothrix thermosphacta")
+    plt.legend(loc="lower center", numpoints=1)
+    plt.xlim([10,60])  
+    plt.ylim([0,1])
+    plt.ylabel("Growth rate")
+    plt.xlabel("Temperature [C]")
+    plt.title("Growth rate by temperature")
+    
+    plots=plt.show()
+    
+    return(plots)
+
+print(dataPlot("Book1.csv"))
