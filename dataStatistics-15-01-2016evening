@@ -1,0 +1,70 @@
+"""
+Function computes the statistics on the incoming dataset.
+"""
+import numpy as np
+import math
+
+
+def dataStatistics(data, statistics):
+    
+    result=0    
+    above50=0
+    below20=0
+
+        
+    if statistics == "Mean Temperature":
+        temperature = data[:,0]
+        result = np.mean(temperature)
+    
+    elif statistics == "Mean Growth rate":
+        growthRate = data[:,1]
+        result = np.mean(growthRate)
+        
+    elif statistics == "Std Temperature":
+        stdTem = data[:,0]
+        result = np.std(stdTem)
+        
+    elif statistics == "Std Growth rate":
+        stdGrowthRate = data[:,1]
+        result = np.std(stdGrowthRate)
+        
+    elif statistics == "Rows":
+        row = np.size(data[:,0])
+        result = row
+    
+    #mean of growth rate for temperatures below 20 degrees 
+    elif statistics == "Mean Cold Growth rate":
+        tem = data[:,0]
+        grow = data[:,1]
+        totalsum = 0
+        count = 0
+        for i in range(np.size(data[:,0])):
+            if (float(tem[i]) < 20.0):
+                totalsum = totalsum + float(grow[i])
+                count = count + 1
+                result = totalsum/count
+            else:
+                below20+=1
+                continue
+        if below20>0 and result==0:
+            print("Selected dataset does not contain temperature samples below 20°C")
+    
+    #mean of growth rate for temperatures above 50 degrees        
+    elif statistics == "Mean Hot Growth rate":
+        tem = data[:,0]
+        grow = data[:,1]
+        totalsum = 0
+        count = 0
+        for i in range(np.size(data[:,0])):
+            if (float(tem[i]) > 50):
+                totalsum = totalsum + float(grow[i])
+                count = count + 1
+                result = totalsum/count
+            else:
+                above50+=1
+                continue
+        if above50>0 and result==0:
+            print("Selected dataset does not contain temperature samples above 50°C")
+    
+    return (result)
+
