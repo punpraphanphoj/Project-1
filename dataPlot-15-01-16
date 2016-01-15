@@ -1,0 +1,73 @@
+import pandas as pd
+import numpy as np
+import matplotlib.pyplot as plt
+
+def dataPlot(data):
+    # Plot 
+    for i in range(np.size(data,0)):
+        if data[i,2]== 'Salmonella enterica':
+            data[i,2]=1
+        elif data[i,2]== 'Bacillus cereus':
+            data[i,2]=2
+        elif data[i,2]== 'Listeria':
+            data[i,2]=3
+        elif data[i,2]== 'Brochothrix thermosphacta':
+            data[i,2]=4
+    print(data)        
+    database=np.array(data)
+
+    #database=database.as_matrix(columns=database.columns[0:]) 
+ # Plot 1
+    
+    fig=plt.figure(1)
+    his=np.histogram(database[:,2], bins=(np.arange(1,6)))
+    plt.bar(his[1][1:],his[0],width=0.8, align="center")
+    ax=fig.gca()
+    ax.set_xticks(his[1][1:])
+    ax.set_xticklabels(["Salmonella enterica","Bacillus cereus","Listeria","Brochothrix thermosphacta"], rotation = 60, ha="right")
+    plt.title("Number of bacteria")
+    plt.ylabel("Number")
+    
+    # Plot 2
+    
+    plt.figure(2)    
+    bac1 = []
+    bac2 = []
+    bac3 = []
+    bac4 = []
+    
+    # for loop separates array into 4 arrays, each of them containing data for different bacteria type
+    
+    for i in range (np.size(data,0)):
+        if float(database[i,2]) == 1:
+            bac1.append(database[i,:])
+        elif float(database[i,2]) == 2:
+            bac2.append(database[i,:])
+        elif float(database[i,2]) == 3:
+            bac3.append(database[i,:])
+        elif float(database[i,2]) == 4:
+            bac4.append(database[i,:])
+    print(bac1)
+    plt.plot(int(bac1[:,0]),int(bac1[:,1]), "b*", label="Salmonella enterica")  
+    plt.plot(bac2[:,0],bac2[:,1], "go", label="Bacillus cereus")
+    plt.plot(bac3[:,0],bac3[:,1], "rs", label="Listeria")
+    plt.plot(bac4[:,0],bacteria4[:,1], "y^", label="Brochothrix thermosphacta")
+    plt.legend(loc="lower center", numpoints=1)
+    plt.xlim([10,60])  
+    plt.ylim([0,1])
+    plt.ylabel("Growth rate")
+    plt.xlabel("Temperature [C]")
+    plt.title("Growth rate by temperature")
+    
+    plots=plt.show()
+    
+    return(plots)
+
+
+
+print(dataPlot(np.array(([[25.0, 0.109, 'Salmonella enterica'],
+ [20.0, 0.096 ,'Bacillus cereus'],
+ [25.0 ,0.517 ,'Listeria'],
+ [35.0 ,1.0859999999999999 ,'Brochothrix thermosphacta'],
+ [40.0 ,0.934 ,'Bacillus cereus'],
+ [35.0 ,0.109 ,'Salmonella enterica']]))))
