@@ -1,0 +1,213 @@
+#Project 1, Main script
+
+import numpy as np
+import os
+import math
+import sys
+
+
+def mainScript():
+    
+    #Empty array to keep loaded data        
+    data=np.empty([0])
+    #Variable to store file name
+    filename=np.empty([0])
+    #Data filter status
+    Filter=0    
+    
+    #Main menu. Loop until user quits
+    while True:
+        print('\n*******************************************\n'
+                'Welcome to Bacteria Data Analysis program\n\n'
+                'Please select on of the following options:\n'
+                '1-Load data\n'
+                '2-Filter data\n'
+                '3-Display statistics\n'
+                '4-Generate plots\n'
+                '5-Quit\n'
+                '\n*******************************************')
+    #Display the current filter and file status
+        if data.size==0:
+            print('(The data has not been loaded)')
+        else:
+            print('(The data file "%s" has been loaded)'%filename)
+        
+        if Filter!=1:
+            print('(Data filter disabled)')
+        else:
+            print('(Data filter enabled)')
+                
+      #Check the validity of the input (must be in range)
+        while True:
+            try:
+                choice=float(input('Please select an option:'))
+                if (choice in range(1,6)):
+                    break
+                else:
+                    print('Not valid number. Please try again')
+            except ValueError:
+                print('Not valid number. Please try again')
+        
+        
+        
+        
+        
+        
+        #Option 1:Load csv file
+        if choice==1:
+            while True:
+                try:
+                    filename=input('Please input file name and csv extension [filename.csv].'
+                    'Make sure the file is in the current working directory:')
+                    if (os.path.isfile(filename)):
+                        break
+                except:
+                    pass
+            from dataLoad import dataLoad
+            
+            print('\n')            
+            data=dataLoad(filename)
+            
+            input('"%s" loaded. \nPress any key to return to main menu:'%filename)
+    
+        
+        
+        
+        
+        
+        
+        #Option 2:Filter data
+        elif choice==2:
+            
+            #Check if file has been loaded
+            if data.size==0:
+                print('Please load the data first (select option 1)\n')  
+                input('Press any key to return to main menu:')
+        
+            else:
+                lower=0
+                upper=0
+                #Setting array with bacteria name for further reference
+                bacterianame=np.array(["Salmonella enterica","Bacillus cereus",
+                                   "Listeria","Brochothrix thermosphacta"])
+                #Filter bacteria type
+                while True:
+                    try:
+                        bacteriachoice=float(input('Please select a bacteria type\n'
+                                            '1-Salmonella enterica\n'
+                                            '2-Bacillus cereus\n'
+                                            '3-Listeria\n'
+                                            '4-Brochothrix thermosphacta\n'
+                                            'Press 0 to disable filter:'))
+                        if (bacteriachoice in range(0,5)):
+                            if bacteriachoice>0:
+                                Filter=1
+                                bacteriachoice-=1
+                            break
+                        else:
+                            print('Not valid number. Please try again')
+                    except ValueError:
+                        print('Not valid number. Please try again')      
+                
+                #Filter lower GR limit
+                while True:
+                    try:
+                        lower=float(input('Please select lower limit of growth rate (0 for no lower limit):'))
+                        if (lower>=0):
+                            Filter=1
+                            break
+                        else:
+                            print('Not valid number. Please try again')
+                    except ValueError:
+                        print('Not valid number. Please try again')
+                        
+                #Filter upper GR limit                    
+                while True:
+                    try:
+                        upper=float(input('Please select upper limit of growth rate (0 for no lower limit):'))
+                        if (upper>0) and (upper<math.inf):
+                            Filter=1
+                            break
+                        elif (upper==0):
+                            upper=math.inf
+                            break
+                        else:
+                            print('Not valid number. Please try again')
+                    except ValueError:
+                        print('Not valid number. Please try again')
+           
+                #Filter data
+                logic1=data[:,1]<upper
+                data=data[logic1]
+                logic2=data[:,1]>lower
+                data=data[logic2]
+                if bacteriachoice!=0:
+                    logic3=data[:,2]==bacterianame[bacteriachoice]
+                    data=data[logic3]
+           
+                input('Filter set.\nPress any key to return to main menu:')
+       
+    
+       
+       
+       #Option 3:Display statistics
+        elif choice==3:
+            #Setting array with statistic types for further reference
+            statdata=np.array(['Mean Temperature','Mean Growth rate','Std Temperature',
+                               'Std Growth rate','Rows','Mean Cold Growth rate',
+                               'Mean Hot Growth rate'])
+            #Check if file has been loaded
+            if data.size==0:
+                print('Please load the data first (select option 1)\n')  
+                input('Press any key to return to main menu:')
+  
+            else:
+                while True:
+                    try:
+                        statnumber=float(input('Please select desired statistical type\n'
+                                        '1-Mean Temperature\n'
+                                        '2-Mean Growth rate\n'
+                                        '3-Standard deviation of Temperature\n'
+                                        '4-Standard deviation of Growth rate\n'
+                                        '5-The total number of rows in the data\n'
+                                        '6-Mean Growth rate for temperature under 20 degrees\n'
+                                        '7-Mean Growth rate for temperature over 50 degrees:'))
+                        if (statnumber in range(1,8)):
+                            statistic=statdata[int(statnumber-1)]
+                            break
+                        else:
+                            print('Not valid number. Please try again')
+                    except ValueError:
+                        print('Not valid number. Please try again') 
+                        
+          
+                from dataStatistics import dataStatistics
+                print(dataStatistics(data, statistic))
+                
+                input('\nPress any key to return to main menu:')
+        
+        
+        
+        
+        #Option 4:Generate plot
+        elif choice==4:
+            #Check if file has been loaded
+            if data.size==0:
+                print('Please load the data first (select option 1)\n')  
+            else:
+                from dataPlot import dataPlot
+                dataPlot(data)
+            
+            input('Press any key to return to main menu:')
+            
+            
+       
+       
+       
+       
+       #Option 5: Quit
+        else:
+            sys.exit()
+           
+                 
+mainScript()
